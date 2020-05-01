@@ -15,5 +15,8 @@ def f(p):
 def c(p):
     return np.matmul(C.transpose(), p) - d
 
-x0 = np.array([[0], [0], [0], [0]])
+for i in range(C.shape[0]):
+
+
+
 W0 = [1, 2]
