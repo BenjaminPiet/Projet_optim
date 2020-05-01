@@ -10,7 +10,7 @@ C = np.array([[-0.0401, -0.0162, -0.0039, 0.0002], \
 d = np.array([[-92.6], [-29.0], [2671], [135], [103], [19], [10]])
 
 def f(p):
-    return float(0.5 * np.matmul(p.transpose(), np.matmul(A, p)))
+    return float(0.5 * np.matmul(p.transpose(), np.matmul(A, p))-np.dot(b.transpose(),p))
 
 def c(p):
     return np.matmul(C.transpose(), p) - d
