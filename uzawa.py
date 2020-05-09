@@ -68,5 +68,5 @@ def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0 = 1.0, max_iter 
 	print("lambdak : ", lambdak)
 	return xk, k
 
-x0=np.array([0,0,0,0])
+x0=np.array([[0], [0], [0], [0]])
 print(uzawa_wolfe_step(f,grad_f,c,grad_c,x0,0.1))
