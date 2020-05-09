@@ -39,7 +39,7 @@ def xk_is_solution(xk, Wk):
         if len(Wk_systeme) != 0:
             CC_systeme = C[:, Wk_systeme]
             dd_systeme = d[Wk_systeme, :]
-            Lambda_systeme = np.linalg.solve(CC_systeme.transpose(), dd_systeme)
+            Lambda_systeme = np.linalg.solve(-CC_systeme.transpose(), dd_systeme)
             for j in Wk:
                 if j in Wk_systeme:
                     Lambda[Wk.index(j), 0] = Lambda_systeme[Wk_systeme.index(j), 0]
