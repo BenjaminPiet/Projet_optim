@@ -11,13 +11,6 @@ d = np.array([[-92.6], [-29.0], [2671], [135], [103], [19], [10]])
 eps = 1e-8 # paramètre donnant la valeur maximale des composantes
 # de la direction pk pour que pk ne soit pas considérée comme nulle.
 
-def f(p):
-    return float(0.5 * np.matmul(p.transpose(), np.matmul(A, p)) - np.dot(b.transpose(), p))
-
-def c(p):
-    return np.matmul(C.transpose(), p) - d
-
-
 def xk_is_solution(xk, Wk):
     '''
     Etape 1 de l'algorithme des contraintes actives.
@@ -36,6 +29,7 @@ def xk_is_solution(xk, Wk):
                 # Lambda_i = 0 : on retire la contrainte Wk_systeme[i]
                 del Wk_systeme[Wk_systeme.index(Wk[i])]
         Lambda = np.zeros((len(Wk), 1))
+        print(Wk_systeme)
         if len(Wk_systeme) != 0:
             CC_systeme = C[:, Wk_systeme]
             dd_systeme = d[Wk_systeme, :]
@@ -56,49 +50,5 @@ CC = C[:, W0]
 dd = d[W0, :]
 x0 = np.linalg.solve(CC.transpose(), dd)
 
-def contraintes():
-    xk = x0
-    Wk = W0
-    while True:
-        if xk_is_solution(xk, Wk)[0]:
-            return xk, Wk
-        # (a)
-        '''
-        L'étape (a) consiste à résoudre un problème d'optimisation sous
-        contraintes d'égalité. On cherche alors (p*, Lambda*) point stationnaire
-        du lagrangien associé. Cette recherche, comme présenté dans le notebook,
-        aboutit à la résolution d'un système linéaire.
-        '''
-        D = C[:, Wk]
-        E_ligne_0 = np.concatenate((D.transpose(), np.zeros((D.shape[1], D.shape[1]))), axis=1)
-        E_ligne_1 = np.concatenate((A, D), axis=1)
-        E = np.concatenate((E_ligne_0, E_ligne_1), axis=0)
-        F = np.concatenate((np.zeros((D.shape[1], 1)), -np.matmul(A, xk) + b), axis=0)
-        X = np.linalg.solve(E, F)
-        pk = X[0:4, :]
-        if any([abs(pk[i, 0]) > eps for i in range(4)]):
-            # (b) : pk != 0
-            W_barre = [i for i in range(7) if i not in Wk]
-            L, indices = [], []
-            for i in W_barre:
-                c_i = C[:,i]
-                if np.dot(c_i, pk) > 0:
-                    L.append((d[i, 0] - np.dot(c_i, xk))/np.dot(c_i, pk))
-                    indices.append(i)
-            if L != []:
-                alphak = min(1, min(L))
-            else:
-                alphak = 1
-            xk = xk + alphak*pk
-            if alphak < 1:
-                j = indices[L.index(min(L))]
-                Wk.append(j)
-        else:
-            # (c) ! pk = 0
-            booleen, Lambda = xk_is_solution(xk, Wk)
-            if booleen:
-                return xk, Wk
-            Lambda = Lambda.tolist()
-            c = Lambda.index(min(Lambda))
-            del Wk[c]
-    return xk, Wk
+Wk = [0, 1, 3, 4]
+xk = np.array([[0], [1], [10], [0]])
