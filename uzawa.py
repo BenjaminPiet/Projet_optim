@@ -13,7 +13,11 @@ eps = 1e-8 # paramètre donnant la valeur maximale des composantes
 # de la direction pk pour que pk ne soit pas considérée comme nulle.
 
 def f(p):
+<<<<<<< HEAD
+    return 0.5 * np.matmul(p.transpose(), np.matmul(A, p)) - np.matmul(b.transpose(), p)
+=======
 	return float(0.5 * np.matmul(p.transpose(), np.matmul(A, p)) - np.dot(b.transpose(), p))
+>>>>>>> 429c33ae7e2ff7593039b6a1fe6fede37acaafa5
 
 def c(p):
 	return np.matmul(C.transpose(), p) - d
@@ -50,23 +54,33 @@ def wolfe_step(fun, grad_fun, xk, pk, c1 = 0.25, c2 = 0.75, M = 1000):
 	#print("Trop d'itérations de Wolfe")
 	return li
 
-def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0 = 1.0, max_iter = 100000, epsilon_grad_L = 1e-8):
+
+
+
+def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0, max_iter = 100000, epsilon_grad_L = 1e-8):
 	k = 0
 	xk = x0
 	lambdak = lambda0
-	grad_Lagrangienk_xk = grad_fun(xk) + lambdak*grad_c(xk)
+	grad_Lagrangienk_xk = grad_fun(xk) + np.matmul(lambdak,grad_c(xk))
 	while ((k<max_iter) and (np.linalg.norm(grad_Lagrangienk_xk)>epsilon_grad_L)):
-		Lagrangienk = lambda x : fun(x) + lambdak*c(x)
-		grad_Lagrangienk = lambda x : grad_fun(x) + lambdak*grad_c(x)
+		Lagrangienk = lambda x : fun(x) + np.matmul(lambdak,c(x))
+		grad_Lagrangienk = lambda x : grad_fun(x) + np.matmul(lambdak,grad_c(x))
 		grad_Lagrangienk_xk = grad_Lagrangienk(xk)
 		pk = -grad_Lagrangienk_xk
 		lk = wolfe_step(Lagrangienk, grad_Lagrangienk, xk, pk)
-		xk = xk + lk*pk
+		xk = xk + lk*pk;
 		lambdak = np.maximum(0, lambdak + rho*c(xk))
 		k = k + 1
 	print("Nombre d'iterations : ", k)
 	print("lambdak : ", lambdak)
-	return xk, k
+	return xk
 
 x0=np.array([0,0,0,0])
+<<<<<<< HEAD
+lambda0=np.array([[1.0,1.0,1.0,1.0,1.0,1.0,1.0]])
+print(np.shape(lambda0))
+
+print(uzawa_wolfe_step(f,grad_f,c,grad_c,x0,0.1,lambda0))
+=======
 print(uzawa_wolfe_step(f,grad_f,c,grad_c,x0,0.1))
+>>>>>>> 429c33ae7e2ff7593039b6a1fe6fede37acaafa5
