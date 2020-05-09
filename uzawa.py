@@ -50,9 +50,6 @@ def wolfe_step(fun, grad_fun, xk, pk, c1 = 0.25, c2 = 0.75, M = 1000):
 	#print("Trop d'itérations de Wolfe")
 	return li
 
-
-
-
 def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0 = 1.0, max_iter = 100000, epsilon_grad_L = 1e-8):
 	k = 0
 	xk = x0
@@ -64,12 +61,12 @@ def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0 = 1.0, max_iter 
 		grad_Lagrangienk_xk = grad_Lagrangienk(xk)
 		pk = -grad_Lagrangienk_xk
 		lk = wolfe_step(Lagrangienk, grad_Lagrangienk, xk, pk)
-		xk = xk + lk*pk;
+		xk = xk + lk*pk
 		lambdak = np.maximum(0, lambdak + rho*c(xk))
 		k = k + 1
 	print("Nombre d'iterations : ", k)
 	print("lambdak : ", lambdak)
-	return xk
+	return xk, k
 
 x0=np.array([0,0,0,0])
 print(uzawa_wolfe_step(f,grad_f,c,grad_c,x0,0.1))
