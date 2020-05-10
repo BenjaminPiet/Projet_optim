@@ -4,10 +4,10 @@ import numpy as np
 A = np.array([[3.0825, 0, 0, 0], [0, 0.0405, 0, 0], [0, 0, 0.0271, -0.0031], \
 	[0, 0, -0.0031, 0.0054]])
 b = np.array([[2671], [135], [103], [19]])
-C = np.array([[-0.0401, -0.0162, -0.0039, 0.0002], \
-	[-0.1326, -0.0004, -0.0034, 0.0006], [1.5413, 0, 0, 0], \
-	[0, 0.0203, 0, 0], [0, 0, 0.0136, -0.0015], \
-	[0, 0, -0.0016, 0.0027], [0.0160, 0.0004, 0.0005, 0.0002]]).T
+C = np.array([[-0.0401, -0.1326, 1.5413, 0.0, 0.0, 0.0, 0.0160], \
+	[-0.0162, -0.0004, 0.0, 0.0203, 0.0, 0.0, 0.0004], \
+	[-0.0039, -0.0034, 0.0, 0.0, 0.0136, -0.0016, 0.0005], \
+	[0.0002, 0.0006, 0.0, 0.0, -0.0015, 0.0027, 0.0002]])
 d = np.array([[-92.6], [-29.0], [2671], [135], [103], [19], [10]])
 eps = 1e-8 # paramètre donnant la valeur maximale des composantes
 # de la direction pk pour que pk ne soit pas considérée comme nulle.
@@ -25,7 +25,7 @@ def grad_c(p):
 	return C
 
 # Conditions de Wolfe
-def wolfe_step(fun, grad_fun, xk, pk, c1 = 0.1, c2 = 0.20, M = 1000):
+def wolfe_step(fun, grad_fun, xk, pk, c1 = 0.25, c2 = 0.75, M = 1000):
 	l_moins = 0
 	l_plus = 0
 	f_xk = fun(xk)
@@ -37,7 +37,7 @@ def wolfe_step(fun, grad_fun, xk, pk, c1 = 0.1, c2 = 0.20, M = 1000):
 			l_plus = li
 			li = (l_moins + l_plus)/2.0
 		else:
-			if (np.dot(grad_fun(xk+li*pk).T, pk) < c2*np.dot(grad_f_xk.T, pk)):
+			if (np.dot(grad_fun(xk + li*pk).T, pk) < c2*np.dot(grad_f_xk.T, pk)):
 				l_moins = li
 				if (l_plus == 0):
 					li = 2*li
@@ -49,7 +49,7 @@ def wolfe_step(fun, grad_fun, xk, pk, c1 = 0.1, c2 = 0.20, M = 1000):
 	return li
 
 
-def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0, max_iter = 100000, epsilon_grad_L = 1e-3):
+def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0, max_iter = 5000, epsilon_grad_L = 1e-3):
 	k = 0
 	xk = x0
 	lambdak = lambda0
@@ -68,8 +68,8 @@ def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0, max_iter = 1000
 	print("lambdak : ", lambdak)
 	return xk
 
-x0 = np.zeros((4, 1))
-lambda0 = np.ones((7, 1))
+x0 = np.ones((4, 1))
+lambda0 = 100*np.ones((7, 1))
 print(uzawa_wolfe_step(f, grad_f, c, grad_c, x0, 0.1, lambda0))
 
 
@@ -89,7 +89,9 @@ def uzawa_fixed_step(fun, grad_fun, c, grad_c, x0, l, rho, lambda0, max_iter = 1
 	print("lambdak : ", lambdak)
 	return xk
 
-print("Uzawa fixed step...")
-x_fixed_step = uzawa_fixed_step(f, grad_f, c, grad_c, x0, 0.001, 0.1, lambda0)
-print("x_fixed_step : ", x_fixed_step)
-print("c(x_fixed_step) : ", c(x_fixed_step))
+#print("Uzawa fixed step...")
+#x_fixed_step = uzawa_fixed_step(f, grad_f, c, grad_c, x0, 0.001, 0.1, lambda0)
+#print("x_fixed_step : ", x_fixed_step)
+#print("c(x_fixed_step) : ", c(x_fixed_step))
+
+
