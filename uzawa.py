@@ -49,13 +49,12 @@ def wolfe_step(fun, grad_fun, xk, pk, c1 = 0.1, c2 = 0.20, M = 1000):
 	return li
 
 
-def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0, max_iter = 100000, epsilon_grad_L = 1e-3):
+def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0, max_iter = 1000000, epsilon_grad_L = 1e-3):
 	k = 0
 	xk = x0
 	lambdak = lambda0
 	grad_Lagrangienk_xk = grad_fun(xk) + np.matmul(grad_c(xk), lambdak)
 	while ((k < max_iter) and (np.linalg.norm(grad_Lagrangienk_xk) > epsilon_grad_L)):
-		print(np.linalg.norm(grad_Lagrangienk_xk))
 		Lagrangienk = lambda x : fun(x) + np.dot(lambdak.T, c(x))
 		grad_Lagrangienk = lambda x : grad_fun(x) + np.matmul(grad_c(x), lambdak)
 		grad_Lagrangienk_xk = grad_Lagrangienk(xk)
@@ -65,7 +64,7 @@ def uzawa_wolfe_step(fun, grad_fun, c, grad_c, x0, rho, lambda0, max_iter = 1000
 		lambdak = np.array([[max(0, lambdak[i, 0] + rho*c(xk)[i, 0])] for i in range(7)]) # projection sur R+^7
 		k = k + 1
 	print("Nombre d'iterations : ", k)
-	print("lambdak : ", lambdak)
+	print("lk : ", lk)
 	return xk
 
 x0 = np.zeros((4, 1))
@@ -73,14 +72,13 @@ lambda0 = np.ones((7, 1))
 print(uzawa_wolfe_step(f, grad_f, c, grad_c, x0, 0.1, lambda0))
 
 
-def uzawa_fixed_step(fun, grad_fun, c, grad_c, x0, l, rho, lambda0, max_iter = 100000, epsilon_grad_L = 1e-8):
+def uzawa_fixed_step(fun, grad_fun, c, grad_c, x0, l, rho, lambda0, max_iter = 1000000, epsilon_grad_L = 1e-8):
 	k = 0
 	xk = x0
 	lambdak = lambda0
 	grad_Lagrangien_xk = grad_fun(xk) + np.matmul(grad_c(xk), lambdak)
 	while ((k < max_iter) and (np.linalg.norm(grad_Lagrangien_xk) > epsilon_grad_L)):
-		print(np.linalg.norm(grad_Lagrangien_xk))
-		grad_Lagrangien_xk = grad_f(xk) + np.dot(lambdak.T, c(xk))
+		grad_Lagrangien_xk = grad_fun(xk) + np.matmul(grad_c(xk), lambdak)
 		pk = -grad_Lagrangien_xk
 		xk = xk + l*pk
 		lambdak = np.array([[max(0, lambdak[i, 0] + rho*c(xk)[i, 0])] for i in range(7)]) # projection sur R+^7
@@ -89,7 +87,7 @@ def uzawa_fixed_step(fun, grad_fun, c, grad_c, x0, l, rho, lambda0, max_iter = 1
 	print("lambdak : ", lambdak)
 	return xk
 
-print("Uzawa fixed step...")
-x_fixed_step = uzawa_fixed_step(f, grad_f, c, grad_c, x0, 0.001, 0.1, lambda0)
-print("x_fixed_step : ", x_fixed_step)
-print("c(x_fixed_step) : ", c(x_fixed_step))
+#print("Uzawa fixed step...")
+#x_fixed_step = uzawa_fixed_step(f, grad_f, c, grad_c, x0, 0.3, 0.1, lambda0)
+#print("x_fixed_step : ", x_fixed_step)
+#print("c(x_fixed_step) : ", c(x_fixed_step))
