@@ -8,8 +8,6 @@ C = np.array([[-0.0401, -0.0162, -0.0039, 0.0002], \
     [0, 0.0203, 0, 0], [0, 0, 0.0136, -0.0015], \
     [0, 0, -0.0016, 0.0027], [0.0160, 0.0004, 0.0005, 0.0002]]).transpose()
 d = np.array([[-92.6], [-29.0], [2671], [135], [103], [19], [10]])
-eps = 1e-8 # paramètre donnant la valeur maximale des composantes
-# de la direction pk pour que pk ne soit pas considérée comme nulle.
 
 def f(p):
     return float(0.5 * np.matmul(p.transpose(), np.matmul(A, p)) - np.dot(b.transpose(), p))
