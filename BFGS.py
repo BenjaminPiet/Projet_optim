@@ -61,11 +61,11 @@ def newton_BFGS(fun, grad_fun, c, grad_c, x0, lambda0, max_iter = 100000, epsilo
 		sk = xk1 - xk
 		yk = grad_Lagrangienk_xk1 - grad_Lagrangienk_xk
 		gammak = float(1.0/np.dot(yk.T, sk))
-		Ak = np.identity(len(x0)) - gammak*np.multiply(sk[:, np.newaxis], yk)
-		Bk = np.identity(len(x0)) - gammak*np.multiply(yk[:, np.newaxis], sk)
-		Hk = np.matmul(np.dot(Ak, Hk), Bk) + gammak*np.multiply(sk[:, np.newaxis], sk)
+		Ak = np.identity(len(x0)) - gammak*np.multiply(sk, yk.T)
+		Bk = np.identity(len(x0)) - gammak*np.multiply(yk, sk.T)
+		Hk = np.matmul(np.dot(Ak, Hk), Bk) + gammak*np.multiply(sk, sk.T)
 		xk = xk1
-		rhok1 = np.dot(grad_c(xk1), np.matmul(Hk, grad_c(xk1)))
+		rhok1 = np.dot(grad_c(xk1).T, np.matmul(Hk, grad_c(xk1)))
 		lambdak = np.maximum(0, lambdak + (1/rhok1)*c(xk1))
 		k = k + 1
 	print("Nombre d'iterations : ", k)
